@@ -1,0 +1,94 @@
+@API_Day2_HostAddress = http://localhost:5029
+
+GET {{API_Day2_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
+
+### API-Day2 Authentication and Authorization Tests
+
+### 1. Create Admin User (One-time setup)
+POST {{baseUrl}}/api/Account/CreateAdmin
+Content-Type: application/json
+
+### 2. Register a new user
+POST {{baseUrl}}/api/Account/Register
+Content-Type: application/json
+
+{
+  "userName": "testuser",
+  "password": "Test123!"
+}
+
+### 3. Login with Identity (Admin)
+POST {{baseUrl}}/api/Account/Login
+Content-Type: application/json
+
+{
+  "userName": "admin",
+  "password": "123"
+}
+
+### 4. Login with Identity (Regular User)
+POST {{baseUrl}}/api/Account/Login
+Content-Type: application/json
+
+{
+  "userName": "testuser",
+  "password": "Test123!"
+}
+
+### 5. Static Login (Admin only)
+POST {{baseUrl}}/api/Account/StaticLogin
+Content-Type: application/json
+
+{
+  "userName": "admin",
+  "password": "123"
+}
+
+### 6. Test Protected Endpoint (Any authenticated user)
+GET {{baseUrl}}/api/Account/Protected
+Authorization: Bearer {{token}}
+
+### 7. Test Admin Protected Endpoint (Admin role required)
+GET {{baseUrl}}/api/Account/AdminProtected
+Authorization: Bearer {{token}}
+
+### 8. Test Admin Only Endpoint (Admin user only)
+GET {{baseUrl}}/api/Account/AdminOnly
+Authorization: Bearer {{token}}
+
+### 9. Test Admin Only Better Endpoint (Admin role + admin user check)
+GET {{baseUrl}}/api/Account/AdminOnlyBetter
+Authorization: Bearer {{token}}
+
+### 10. Test Course Admin Stats (Admin role required)
+GET {{baseUrl}}/api/Course/AdminStats
+Authorization: Bearer {{token}}
+
+### 11. Test Public Course Endpoints (No authentication required)
+GET {{baseUrl}}/api/Course
+
+### 12. Test Protected Course Operations (Admin role required)
+POST {{baseUrl}}/api/Course
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "crs_Name": "Advanced C# Programming",
+  "crs_Description": "Advanced concepts in C# programming",
+  "duration": 40
+}
+
+### 13. Test Department Endpoints (Public)
+GET {{baseUrl}}/api/Department
+
+### 14. Test with Regular User Token (Should fail for admin endpoints)
+GET {{baseUrl}}/api/Account/AdminProtected
+Authorization: Bearer {{regularUserToken}}
+
+### Variables
+@baseUrl = https://localhost:7001
+@token = YOUR_JWT_TOKEN_HERE
+@regularUserToken = YOUR_REGULAR_USER_JWT_TOKEN_HERE
